@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <style>
+        :root {
+            /* 🎨 Unified aesthetic blue color palette */
+            --blue-light: #e8f1fd;
+            --blue-soft: #c9e3fa;
+            --blue-medium: #6fb3f2;
+            --blue-strong: #2986cc;
+            --blue-dark: #1d4e89;
+            --accent-cyan: #00b4d8;
+            --accent-mint: #90e0ef;
+            --text-dark: #0a192f;
+            --text-light: #ffffff;
+            --card-bg: #f9fbff;
+            --border-color: #cfdfee;
+        }
+
+        body {
+            background-color: var(--blue-light);
+            color: var(--text-dark);
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            background-color: var(--blue-dark) !important;
+            border-bottom: 3px solid var(--blue-medium);
+        }
+
+            .navbar a.nav-link,
+            .navbar-brand {
+                color: var(--text-light) !important;
+                transition: color 0.3s ease;
+            }
+
+                .navbar a.nav-link:hover {
+                    color: var(--accent-mint) !important;
+                }
+
+        /* ===== CARDS ===== */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(29, 78, 137, 0.1);
+        }
+
+        .card-header {
+            background: linear-gradient(to right, var(--blue-medium), var(--blue-strong));
+            color: white;
+            font-weight: 600;
+            border-bottom: none;
+            text-align: center;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-primary {
+            background-color: var(--blue-strong);
+            border-color: var(--blue-dark);
+        }
+
+            .btn-primary:hover {
+                background-color: var(--blue-dark);
+            }
+
+        .btn-warning {
+            background-color: var(--accent-cyan);
+            color: white;
+            border: none;
+        }
+
+            .btn-warning:hover {
+                background-color: var(--blue-medium);
+            }
+
+        .btn-danger {
+            background-color: #e74c3c;
+            border: none;
+        }
+
+            .btn-danger:hover {
+                background-color: #c0392b;
+            }
+
+        .btn-light {
+            background-color: var(--blue-soft);
+            border: 1px solid var(--blue-medium);
+            color: var(--text-dark);
+        }
+
+            .btn-light:hover {
+                background-color: var(--accent-mint);
+            }
+
+        /* ===== MODALS ===== */
+        .modal-content {
+            border-radius: 10px;
+            border: 1px solid var(--blue-medium);
+            background-color: var(--blue-light);
+        }
+
+        .modal-header {
+            background-color: var(--blue-strong);
+            color: var(--text-light);
+            border-bottom: none;
+        }
+
+        /* ===== TABLE ===== */
+        .table thead {
+            background-color: var(--blue-medium);
+            color: var(--text-light);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background-color: var(--blue-dark);
+            color: var(--text-light);
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 40px;
+            border-top: 3px solid var(--blue-medium);
+        }
+    </style>
+
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <!-- Brand -->
+            <a class="navbar-brand fw-bold text-white" href="@Url.Action("Index","Home")">
+                BikeStores MVC
+            </a>
+
+            <!-- Toggle for mobile -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Links -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        @Html.ActionLink("Home", "Index", "Home", null, new { @class = "nav-link" })
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("Maintain", "Index", "Maintain", null, new { @class = "nav-link" })
+                    </li>
+                    <li class="nav-item">
+                        @Html.ActionLink("Reports", "Index", "Reports", null, new { @class = "nav-link" })
+                    </li>
+                </ul>
+
+                <!-- Right side text or user info -->
+                <span class="navbar-text text-light small">
+                    INF272 Assignment 03
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

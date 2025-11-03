@@ -1,0 +1,66 @@
+﻿@model HW03.Models.customer
+@{
+    ViewBag.Title = "Add New Customer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h4>Add New Customer</h4>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("CreateCustomer", "Home", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.first_name, "First Name")
+                    @Html.TextBoxFor(m => m.first_name, new { @class = "form-control", placeholder = "Enter first name" })
+                    @Html.ValidationMessageFor(m => m.first_name, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.last_name, "Last Name")
+                    @Html.TextBoxFor(m => m.last_name, new { @class = "form-control", placeholder = "Enter last name" })
+                    @Html.ValidationMessageFor(m => m.last_name, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.email, "Email")
+                    @Html.TextBoxFor(m => m.email, new { @class = "form-control", placeholder = "Enter email address" })
+                    @Html.ValidationMessageFor(m => m.email, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.phone, "Phone Number")
+                    @Html.TextBoxFor(m => m.phone, new { @class = "form-control", placeholder = "Enter phone number" })
+                    @Html.ValidationMessageFor(m => m.phone, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.street, "Street")
+                    @Html.TextBoxFor(m => m.street, new { @class = "form-control", placeholder = "Enter street" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.city, "City")
+                    @Html.TextBoxFor(m => m.city, new { @class = "form-control", placeholder = "Enter city" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.state, "State")
+                    @Html.TextBoxFor(m => m.state, new { @class = "form-control", placeholder = "Enter state" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.zip_code, "Zip Code")
+                    @Html.TextBoxFor(m => m.zip_code, new { @class = "form-control", placeholder = "Enter ZIP" })
+                </div>
+
+                <button type="submit" class="btn btn-success">Save Customer</button>
+                @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-secondary ms-2" })
+            }
+        </div>
+    </div>
+</div>

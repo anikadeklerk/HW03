@@ -1,0 +1,288 @@
+﻿@{
+    ViewBag.Title = "Home";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var staffs = ViewBag.Staffs as System.Collections.IEnumerable;
+    var customers = ViewBag.Customers as System.Collections.IEnumerable;
+    var products = ViewBag.Products as System.Collections.IEnumerable;
+}
+
+<div class="container mt-4">
+    @*<h2 class="text-center mb-4">Home</h2>*@
+
+    <!-- ===== DASHBOARD SUMMARY ===== -->
+    <div class="text-center mb-4">
+        <h3 class="fw-bold">BikeStores Dashboard</h3>
+    </div>
+
+    <div class="row text-center justify-content-center mb-4 g-3">
+        <div class="col-md-2 col-sm-4">
+            <div class="border rounded p-3 shadow-sm bg-light">
+                <div>Stores</div>
+                <div class="fw-bold fs-4 text-primary">@ViewBag.StoreCount</div>
+            </div>
+        </div>
+
+        <div class="col-md-2 col-sm-4">
+            <div class="border rounded p-3 shadow-sm bg-light">
+                <div>Staff</div>
+                <div class="fw-bold fs-4 text-success">@ViewBag.StaffCount</div>
+            </div>
+        </div>
+
+        <div class="col-md-2 col-sm-4">
+            <div class="border rounded p-3 shadow-sm bg-light">
+                <div>Customers</div>
+                <div class="fw-bold fs-4 text-info">@ViewBag.CustomerCount</div>
+            </div>
+        </div>
+
+        <div class="col-md-2 col-sm-4">
+            <div class="border rounded p-3 shadow-sm bg-light">
+                <div>Products</div>
+                <div class="fw-bold fs-4 text-warning">@ViewBag.ProductCount</div>
+            </div>
+        </div>
+
+        <div class="col-md-2 col-sm-4">
+            <div class="border rounded p-3 shadow-sm bg-light">
+                <div>Orders</div>
+                <div class="fw-bold fs-4 text-danger">@ViewBag.OrderCount</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mb-4">
+        <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary btn-sm">
+            <i class="bi bi-arrow-repeat"></i> Refresh Data
+        </a>
+    </div>
+
+
+    @if (TempData["Msg"] != null)
+    {
+        <div class="alert alert-success">@TempData["Msg"]</div>
+    }
+</div>
+
+<!-- ================= MAIN 3 COLUMNS ================= -->
+<div class="row g-4 justify-content-center">
+
+    <!-- ================= STAFF ================= -->
+    <div class="col-lg-4 col-md-6">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center bg-primary text-white">
+                <span>Staff</span>
+                <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#createStaffModal">Create</button>
+            </div>
+            <div class="card-body" style="height:520px; overflow-y:auto; overflow-x:hidden;">
+                <table class="table table-sm table-striped align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>First</th>
+                            <th>Last</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (dynamic s in staffs)
+                        {
+                            <tr>
+                                <td>@s.first_name</td>
+                                <td>@s.last_name</td>
+                                <td>@s.email</td>
+                                <td>@s.phone</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= CUSTOMERS ================= -->
+    <div class="col-lg-4 col-md-6">
+        <div class="card shadow">
+            <div class="card-header d-flex justify-content-between align-items-center bg-success text-white">
+                <span>Customers</span>
+                <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#createCustomerModal">Create</button>
+            </div>
+            <div class="card-body" style="height:520px; overflow-y:auto; overflow-x:hidden;">
+                <table class="table table-sm table-striped align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>First</th>
+                            <th>Last</th>
+                            <th>Email</th>
+                            <th>City</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (dynamic c in customers)
+                        {
+                            <tr>
+                                <td>@c.first_name</td>
+                                <td>@c.last_name</td>
+                                <td>@c.email</td>
+                                <td>@c.city</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= PRODUCTS ================= -->
+    <div class="col-lg-4 col-md-12">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <div class="d-flex align-items-center justify-content-between">
+                    <span>Products</span>
+                    <form method="get" action="@Url.Action("Index","Home")" class="d-flex gap-2">
+                        <select name="brandFilter" class="form-select form-select-sm">
+                            <option value="">All Brands</option>
+                            @foreach (string b in ViewBag.Brands)
+                            {
+                                <option value="@b" @(b == ViewBag.SelectedBrand ? "selected" : "")>@b</option>
+                            }
+                        </select>
+                        <select name="categoryFilter" class="form-select form-select-sm">
+                            <option value="">All Categories</option>
+                            @foreach (string cat in ViewBag.Categories)
+                            {
+                                <option value="@cat" @(cat == ViewBag.SelectedCategory ? "selected" : "")>@cat</option>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-light btn-sm">Filter</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card-body d-flex flex-column gap-3" style="height:520px; overflow-y:auto; overflow-x:hidden;">
+                @foreach (dynamic p in products)
+                {
+                    var images = ViewBag.ImageFiles as IEnumerable<string>;
+                    string imageName = null;
+
+                    string brand = (p.brand?.brand_name ?? "").Replace(" ", "_");
+                    string productName = (p.product_name ?? "").Replace(" ", "_");
+
+                    imageName = images?.FirstOrDefault(i =>
+                        i.Equals(brand, StringComparison.OrdinalIgnoreCase) ||
+                        productName.IndexOf(i, StringComparison.OrdinalIgnoreCase) >= 0);
+
+                    string imagePath = !string.IsNullOrEmpty(imageName)
+                        ? Url.Content("~/Content/Images/" + imageName + ".jpeg")
+                        : "https://via.placeholder.com/110x80?text=No+Image";
+
+                    <div class="border rounded p-2 flex-shrink-0" style="min-height:90px;">
+                        <div class="d-flex gap-2 align-items-center">
+                            <img src="@imagePath"
+                                 class="rounded"
+                                 style="width:110px;height:80px;object-fit:cover"
+                                 alt="@p.product_name" />
+                            <div class="flex-grow-1 small">
+                                <div class="fw-bold">@p.product_name</div>
+                                <div class="text-muted">@p.brand.brand_name | @p.category.category_name</div>
+                                <div>Model: @p.model_year</div>
+                                <div class="fw-bold">R @String.Format("{0:N2}", p.list_price)</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- ==================== CREATE STAFF MODAL ==================== -->
+<div class="modal fade" id="createStaffModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm("CreateStaff", "Home", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Add New Staff Member</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label>First Name</label>
+                        <input name="first_name" class="form-control" required />
+                    </div>
+                    <div class="mb-2">
+                        <label>Last Name</label>
+                        <input name="last_name" class="form-control" required />
+                    </div>
+                    <div class="mb-2">
+                        <label>Email</label>
+                        <input name="email" type="email" class="form-control" required />
+                    </div>
+                    <div class="mb-2">
+                        <label>Phone</label>
+                        <input name="phone" class="form-control" />
+                    </div>
+                    <div class="mb-2">
+                        <label>Store</label>
+                        <select name="store_id" class="form-select" required>
+                            <option value="">Select a store...</option>
+                            @foreach (var store in ViewBag.Stores)
+                            {
+                                <option value="@store.store_id">@store.store_name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" type="submit">Create</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- ==================== CREATE CUSTOMER MODAL ==================== -->
+<div class="modal fade" id="createCustomerModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            @using (Html.BeginForm("CreateCustomer", "Home", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title">Add New Customer</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label>First Name</label>
+                        <input name="first_name" class="form-control" required />
+                    </div>
+                    <div class="mb-2">
+                        <label>Last Name</label>
+                        <input name="last_name" class="form-control" required />
+                    </div>
+                    <div class="mb-2">
+                        <label>Email</label>
+                        <input name="email" type="email" class="form-control" required />
+                    </div>
+                    <div class="mb-2">
+                        <label>Phone</label>
+                        <input name="phone" class="form-control" />
+                    </div>
+                    <div class="mb-2">
+                        <label>City</label>
+                        <input name="city" class="form-control" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-success" type="submit">Create</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

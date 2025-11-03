@@ -1,0 +1,169 @@
+﻿@{
+    ViewBag.Title = "Reports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var sales = ViewBag.Sales as System.Collections.IEnumerable;
+    string[] brandLabels = ViewBag.BrandLabels as string[];
+    decimal[] brandTotals = ViewBag.BrandTotals as decimal[];
+    var files = ViewBag.Files as System.Collections.IEnumerable;
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Current Sales Report</h2>
+    @if (TempData["Msg"] != null)
+    {<div class="alert alert-info">@TempData["Msg"]</div>}
+
+    <!-- Chart -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-secondary text-white">Sales per Brand</div>
+        <div class="card-body">
+            <canvas id="brandChart" height="120"></canvas>
+        </div>
+    </div>
+
+    <!-- Tabular summary -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-light">Detailed Sales (latest first)</div>
+        <div class="card-body" style="max-height:360px;overflow-y:auto;">
+            <table class="table table-sm table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Staff</th>
+                        <th>Product</th>
+                        <th>Brand</th>
+                        <th class="text-end">Qty</th>
+                        <th class="text-end">Line Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (dynamic r in sales)
+                    {
+                        <tr>
+                            <td>@(((DateTime)r.OrderDate).ToString("yyyy-MM-dd"))</td>
+                            <td>@r.Customer</td>
+                            <td>@r.Staff</td>
+                            <td>@r.Product</td>
+                            <td>@r.Brand</td>
+                            <td class="text-end">@r.Quantity</td>
+                            <td class="text-end">R @String.Format("{0:N2}", r.LineTotal)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Save report -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-dark text-white">Save Report</div>
+        <div class="card-body">
+            @using (Html.BeginForm("Save", "Reports", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label">Filename</label>
+                        <input class="form-control" name="fileName" placeholder="e.g. Sales_October" required />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">File Type</label>
+                        <select class="form-select" name="fileType">
+                            <option>PDF</option>
+                            <option>PNG</option>
+                        </select>
+                    </div>
+                    <div class="col-md-7">
+                        <label class="form-label">Description (resizable)</label>
+                        <textarea class="form-control" name="description" style="min-height:90px; resize: both;"></textarea>
+                    </div>
+                </div>
+                <input type="hidden" name="base64Data" id="base64Data" />
+                <div class="mt-3">
+                    <button type="button" class="btn btn-outline-primary" id="preparePngBtn">Prepare PNG</button>
+                    <button type="button" class="btn btn-outline-secondary" id="preparePdfBtn">Prepare PDF</button>
+                    <button type="submit" class="btn btn-success ms-2">Save to Archive</button>
+                </div>
+                <div class="form-text mt-2">Click “Prepare PNG/PDF” to generate the file content, then click “Save to Archive”. </div>
+            }
+        </div>
+    </div>
+
+    <!-- Archive -->
+    <div class="card shadow">
+        <div class="card-header bg-light">Document Archive</div>
+        <div class="card-body">
+            <table class="table table-sm align-middle">
+                <thead><tr><th>File</th><th>Description</th><th></th></tr></thead>
+                <tbody>
+                    @foreach (string f in files)
+                    {
+                        if (f.EndsWith(".txt")) { continue; }
+                        var safe = System.IO.Path.GetFileNameWithoutExtension(f);
+                        var txt = safe + ".txt";
+                        var txtPath = Server.MapPath("~/App_Data/Reports/" + txt);
+                        string desc = System.IO.File.Exists(txtPath) ? System.IO.File.ReadAllText(txtPath) : "";
+                        <tr>
+                            <td>@f</td>
+                            <td>@desc</td>
+                            <td class="text-end">
+                                <a class="btn btn-outline-primary btn-sm" href="@Url.Action("Download","Reports", new { name = f })">Download</a>
+                                @using (Html.BeginForm("Delete", "Reports", FormMethod.Post, new { @class = "d-inline" }))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="name" value="@f" />
+                                    <button class="btn btn-outline-danger btn-sm" type="submit">Delete</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Chart.js + jsPDF (CDN) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+<script>
+(() => {
+  // Build the chart
+  const labels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(brandLabels ?? new string[0]));
+  const data   = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(brandTotals ?? new decimal[0]));
+
+  const ctx = document.getElementById('brandChart').getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'bar',
+    data: { labels: labels, datasets: [{ label: 'Sales (R)', data: data }] },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+  });
+
+  // Prepare PNG into hidden input (no AJAX; normal form submit afterwards)
+  document.getElementById('preparePngBtn').addEventListener('click', () => {
+    const png = document.getElementById('brandChart').toDataURL('image/png');
+    document.getElementById('base64Data').value = png; // data:image/png;base64,...
+    alert('PNG prepared. Click "Save to Archive".');
+  });
+
+  // Prepare PDF into hidden input
+  document.getElementById('preparePdfBtn').addEventListener('click', async () => {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'p', unit: 'pt', format: 'a4' });
+    const png = document.getElementById('brandChart').toDataURL('image/png');
+
+    doc.setFontSize(16);
+    doc.text('Current Sales Report - Sales per Brand', 40, 40);
+    doc.addImage(png, 'PNG', 40, 60, 520, 300);
+
+    // Add small hint text
+    doc.setFontSize(10);
+    doc.text('Generated by BikeStores MVC (no AJAX).', 40, 380);
+
+    const pdfB64 = doc.output('datauristring'); // data:application/pdf;base64,...
+    document.getElementById('base64Data').value = pdfB64;
+    alert('PDF prepared. Click "Save to Archive".');
+  });
+})();
+</script>

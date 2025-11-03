@@ -1,0 +1,46 @@
+﻿@model HW03.Models.staff
+@{
+    ViewBag.Title = "Add New Staff Member";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h4>Add New Staff Member</h4>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm("CreateStaff", "Home", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.first_name, "First Name")
+                    @Html.TextBoxFor(m => m.first_name, new { @class = "form-control", placeholder = "Enter first name" })
+                    @Html.ValidationMessageFor(m => m.first_name, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.last_name, "Last Name")
+                    @Html.TextBoxFor(m => m.last_name, new { @class = "form-control", placeholder = "Enter last name" })
+                    @Html.ValidationMessageFor(m => m.last_name, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.email, "Email")
+                    @Html.TextBoxFor(m => m.email, new { @class = "form-control", placeholder = "Enter email" })
+                    @Html.ValidationMessageFor(m => m.email, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(m => m.phone, "Phone Number")
+                    @Html.TextBoxFor(m => m.phone, new { @class = "form-control", placeholder = "Enter phone number" })
+                    @Html.ValidationMessageFor(m => m.phone, "", new { @class = "text-danger" })
+                </div>
+
+                <button type="submit" class="btn btn-success">Save Staff</button>
+                @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-secondary ms-2" })
+            }
+        </div>
+    </div>
+</div>
