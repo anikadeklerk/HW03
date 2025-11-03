@@ -27,10 +27,10 @@ namespace HW03.Controllers
             public DateTime OrderDate { get; set; }
         }
 
-        // ===== Report Index: load data + archive list =====
+     
         public async Task<ActionResult> Index()
         {
-            // Join order_items -> orders -> customers -> staffs -> products -> brands
+            // Join order_items  orders  customers  staffs  products -> 
             var q = from oi in db.order_items
                     join o in db.orders on oi.order_id equals o.order_id
                     join c in db.customers on o.customer_id equals c.customer_id
@@ -50,7 +50,7 @@ namespace HW03.Controllers
 
             var rows = await q.OrderByDescending(r => r.OrderDate).ToListAsync();
 
-            // Aggregate for chart: total per brand
+            // Aggregate for chart
             var brandAgg = rows
                 .GroupBy(r => r.Brand)
                 .Select(g => new { Brand = g.Key, Total = g.Sum(x => x.LineTotal) })
@@ -72,7 +72,7 @@ namespace HW03.Controllers
             return View();
         }
 
-        // ===== Save posted base64 report as file + description =====
+        // ===== Save posted  report as file + description =====
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Save(string fileName, string fileType, string base64Data, string description)
@@ -85,7 +85,6 @@ namespace HW03.Controllers
 
             Directory.CreateDirectory(RepoPath);
 
-            // Expect data like "data:application/pdf;base64,AAAA..."
             var parts = base64Data.Split(',');
             var meta = parts[0];
             var b64 = parts.Length > 1 ? parts[1] : "";
@@ -101,7 +100,7 @@ namespace HW03.Controllers
             }
 
             
-            // Save description as sidecar .txt  (async pattern for .NET Framework)
+          
             var descPath = Path.Combine(RepoPath, safeName + ".txt");
             using (var writer = new StreamWriter(descPath, false, Encoding.UTF8))
             {

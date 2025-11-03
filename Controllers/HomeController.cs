@@ -16,7 +16,7 @@ namespace HW03.Controllers
         {
             try
             {
-                // ===== DASHBOARD COUNTS =====
+               
                 ViewBag.StoreCount = await db.stores.CountAsync();
                 ViewBag.StaffCount = await db.staffs.CountAsync();
                 ViewBag.CustomerCount = await db.customers.CountAsync();
@@ -28,7 +28,6 @@ namespace HW03.Controllers
                 ViewBag.Message = "Error loading dashboard: " + ex.Message;
             }
 
-            // existing code continues
             ViewBag.Stores = await db.stores.ToListAsync();
             var staffs = await db.staffs.ToListAsync();
             var customers = await db.customers.ToListAsync();
@@ -46,7 +45,6 @@ namespace HW03.Controllers
             ViewBag.Customers = customers;
             ViewBag.Products = await products.ToListAsync();
 
-            // load images
             string imageDir = Server.MapPath("~/Content/Images");
             var imageFiles = Directory.GetFiles(imageDir, "*.jpeg")
                                       .Select(Path.GetFileNameWithoutExtension)
@@ -57,7 +55,7 @@ namespace HW03.Controllers
         }
 
 
-        // ===== CREATE STAFF (Home only) =====
+        // ===== CREATE STAFF  =====
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateStaff(staff model)
@@ -65,7 +63,6 @@ namespace HW03.Controllers
             if (!ModelState.IsValid)
                 return RedirectToAction("Index");
 
-            // Ensure a valid store_id is assigned
             if (model.store_id == 0)
             {
                 TempData["Msg"] = "Please select a valid store.";
@@ -80,7 +77,7 @@ namespace HW03.Controllers
         }
 
 
-        // ===== CREATE CUSTOMER (Home only) =====
+        // ===== CREATE CUSTOMER  =====
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> CreateCustomer(customer model)
