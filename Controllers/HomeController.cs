@@ -12,39 +12,6 @@ namespace HW03.Controllers
     {
         private readonly BikeStoresEntities db = new BikeStoresEntities();
 
-        // HOME: lists + filters (no edit/delete)
-
-        //public async Task<ActionResult> Index(string brandFilter, string categoryFilter)
-        //{
-        //    ViewBag.Stores = await db.stores.ToListAsync();  // ✅ this line required for both modals
-
-        //    // existing code for staff, customers, products
-        //    var staffs = await db.staffs.ToListAsync();
-        //    var customers = await db.customers.ToListAsync();
-
-        //    var products = db.products.Include(p => p.brand).Include(p => p.category);
-        //    if (!string.IsNullOrEmpty(brandFilter))
-        //        products = products.Where(p => p.brand.brand_name == brandFilter);
-        //    if (!string.IsNullOrEmpty(categoryFilter))
-        //        products = products.Where(p => p.category.category_name == categoryFilter);
-
-        //    ViewBag.Brands = db.brands.Select(b => b.brand_name).Distinct().ToList();
-        //    ViewBag.Categories = db.categories.Select(c => c.category_name).Distinct().ToList();
-
-        //    ViewBag.Staffs = staffs;
-        //    ViewBag.Customers = customers;
-        //    ViewBag.Products = await products.ToListAsync();
-        //    // Automatically build an image map based on files in /Content/Images
-        //    string imageDir = Server.MapPath("~/Content/Images");
-        //    var imageFiles = Directory.GetFiles(imageDir, "*.jpeg")
-        //                              .Select(Path.GetFileNameWithoutExtension)
-        //                              .ToList();
-
-        //    ViewBag.ImageFiles = imageFiles; // send all filenames to the view
-
-
-        //    return View();
-        //}
         public async Task<ActionResult> Index(string brandFilter, string categoryFilter)
         {
             try
