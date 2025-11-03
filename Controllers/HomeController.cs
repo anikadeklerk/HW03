@@ -1,10 +1,15 @@
-﻿using HW03.Models;
+﻿using Antlr.Runtime;
+using HW03.Models;
 using System;
 using System.Data.Entity;
+using System.EnterpriseServices.CompensatingResourceManager;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.Services.Description;
 
 namespace HW03.Controllers
 {
@@ -16,7 +21,8 @@ namespace HW03.Controllers
         {
             try
             {
-               
+                //displays live statistics
+                //Each number is calculated in the controller using CountAsync(), then passed to the view through ViewBag.
                 ViewBag.StoreCount = await db.stores.CountAsync();
                 ViewBag.StaffCount = await db.staffs.CountAsync();
                 ViewBag.CustomerCount = await db.customers.CountAsync();
@@ -32,6 +38,8 @@ namespace HW03.Controllers
             var staffs = await db.staffs.ToListAsync();
             var customers = await db.customers.ToListAsync();
 
+
+            //These dropdowns are automatically populated from the database, so they always reflect the current data in those tables.
             var products = db.products.Include(p => p.brand).Include(p => p.category);
             if (!string.IsNullOrEmpty(brandFilter))
                 products = products.Where(p => p.brand.brand_name == brandFilter);
@@ -54,7 +62,10 @@ namespace HW03.Controllers
             return View();
         }
 
-
+// It first checks if the input data is valid.
+//If it is, it adds a new product entity to the database, saves the changes asynchronously, and refreshes the page.
+//It’s a clean pattern that uses Entity Framework’s Add() method for inserting new records.
+//And again, I use TempData["Msg"] to show a success message at the top of the page.
         // ===== CREATE STAFF  =====
         [HttpPost]
         [ValidateAntiForgeryToken]

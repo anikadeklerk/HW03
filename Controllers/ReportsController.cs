@@ -31,6 +31,7 @@ namespace HW03.Controllers
         public async Task<ActionResult> Index()
         {
             // Join order_items  orders  customers  staffs  products -> 
+            //multi table join across 6 tables
             var q = from oi in db.order_items
                     join o in db.orders on oi.order_id equals o.order_id
                     join c in db.customers on o.customer_id equals c.customer_id

@@ -8,13 +8,15 @@
 }
 
 <div class="container mt-4">
-   
+
 
     <!-- ===== DASHBOARD  ===== -->
     <div class="text-center mb-4">
         <h3 class="fw-bold">BikeStores Dashboard</h3>
     </div>
-
+    @*then passed to the view through ViewBag.*@
+    @*when the page loads, the controller queries each table, 
+        counts how many rows exist, and sends those totals to the dashboard.*@
     <div class="row text-center justify-content-center mb-4 g-3">
         <div class="col-md-2 col-sm-4">
             <div class="border rounded p-3 shadow-sm bg-light">
@@ -134,6 +136,8 @@
     </div>
 
     <!-- ================= PRODUCTS ================= -->
+    @*The Product section also includes filtering functionality for Brands and Categories.
+    These dropdowns are automatically populated from the database*@
     <div class="col-lg-4 col-md-12">
         <div class="card shadow">
             <div class="card-header bg-info text-white">
@@ -142,6 +146,11 @@
                     <form method="get" action="@Url.Action("Index","Home")" class="d-flex gap-2">
                         <select name="brandFilter" class="form-select form-select-sm">
                             <option value="">All Brands</option>
+
+                            @*Start with all products,
+                            then if a brand filter is selected, narrow it down to products from that brand.
+                            If a category filter is also selected, narrow it again to only those matching both conditions.
+                            Finally, the filtered list is passed to the view and displayed in real time*@
                             @foreach (string b in ViewBag.Brands)
                             {
                                 <option value="@b" @(b == ViewBag.SelectedBrand ? "selected" : "")>@b</option>
